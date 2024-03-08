@@ -1,0 +1,57 @@
+# Containers are an isolated environment to run any code
+# git clone https://github.com/docker/welcome-to-docker
+# name: mc-sf-1
+
+# Use the latest ubuntu image
+FROM ubuntu:latest
+
+# Update the package lists
+RUN apt-get update
+
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+
+# Install python3 and sqlite3 vim curl nodejs npm
+RUN apt-get install -y python3 python3-pip sqlite3 vim curl nodejs npm
+# install n
+RUN npm install -g n
+# update nodejs to LTS
+RUN n lts
+
+
+# install salesforce cli
+RUN npm install --global @salesforce/cli 
+
+# Install sfdx plugins
+ARG MOHANC_PLUGIN_VERSION="0.0.350"
+ARG DELTA_PLUGIN_VERSION="v5.19.0"
+
+ RUN echo 'y' | sfdx plugins:install sfdx-mohanc-plugins@${MOHANC_PLUGIN_VERSION}
+ RUN echo 'y' | sfdx plugins:install sfdx-git-delta@${DELTA_PLUGIN_VERSION}
+
+ # test the plugins 
+ RUN sf plugins
+ RUN sf mohanc data bulkapi --help
+ RUN sf sgd source delta --help
+
+#-------------------- Next steps ----------
+# build image using this command in your terminal
+# docker build -t mc-sf-2 .
+
+# list the images
+# docker images
+
+# run the image
+# docker run -it mc-sf-1 --rm mc-sf-1
+# you will be prompted to enter into the shell
+#-------------------------------------------
+
+# docker run <options> <image_name>
+# options: -d : runs the container in detached mode
+#          -p <host_port>:<container_port> - example 8080:80 would map 
+#          port 8080 on your host to port 80 (usually used for web servers) inside the container.
+#      docker run -d -p 8080:80 my-app-image
+#---------------------------------------
+# -v <host_directory>:<container_directory>:
+#      This option mounts a directory on the host machine to a directory inside the container.
+#       This allows you to share files and data between the host and the contain
+#  docker run -v /path/to/your/project:/app my-app-image

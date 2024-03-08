@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dockerfile Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        #left-pane {
+            width: 30%;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+        }
+        #right-pane {
+            flex: 1;
+            padding: 20px;
+        }
+        .form-item {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="left-pane">
+        <h2>Enter Items for Dockerfile</h2>
+        <div id="form">
+            <div class="form-item">
+                <label for="item1">Item 1:</label>
+                <input type="text" id="item1" class="item-input">
+            </div>
+            <div class="form-item">
+                <label for="item2">Item 2:</label>
+                <input type="text" id="item2" class="item-input">
+            </div>
+            <!-- Add more form items as needed -->
+            <button id="generateBtn">Generate Dockerfile</button>
+        </div>
+    </div>
+    <div id="right-pane">
+        <h2>Generated Dockerfile</h2>
+        <div id="editor" style="height: 90vh;"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.3/min/vs/loader.js"></script>
+    <script>
+        // Load Monaco Editor
+        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.3/min/vs' }});
+        require(['vs/editor/editor.main'], function() {
+            const editor = monaco.editor.create(document.getElementById('editor'), {
+                language: 'dockerfile',
+                theme: 'vs-dark',
+                automaticLayout: true
+            });
+
+            // Handle Generate Dockerfile button click
+            document.getElementById('generateBtn').addEventListener('click', function() {
+                // Get items from the form
+                const items = document.querySelectorAll('.item-input');
+                let dockerfileContent = '';
+
+                // Generate Dockerfile content
+                items.forEach((item, index) => {
+                    if (item.value.trim() !== '') {
+                        dockerfileContent += `ARG ITEM_${index + 1}=${item.value.trim()}\n`;
+                    }
+                });
+
+                // Add instructions
+                dockerfileContent += '\n# Add instructions here\n';
+
+                // Set content to Monaco Editor
+                editor.setValue(dockerfileContent);
+            });
+        });
+    </script>
+</body>
+</html>
