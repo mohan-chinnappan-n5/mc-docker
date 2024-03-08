@@ -1,0 +1,1 @@
+docker build -t mc-sf-1 .
